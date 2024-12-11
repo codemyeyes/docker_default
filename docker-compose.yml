@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+
+  db_mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "55511:3306"
+    volumes:
+      - "./db_mysql/mysql/:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "111111"
+    command: mysqld --sql_mode=""
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "55512:80"
+    environment:
+      PMA_ARBITRARY: "1"
+
+  db_mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "55513:27017"
+    volumes:
+      - "./db_mongo/data/db:/data/db"
+    command:
+      [--auth]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "111111"
+
+  db_redis:
+    image: redis:latest
+    command: "redis-server --requirepass 111111"
+    restart: always
+    ports:
+      - "55514:6379"
+
+  db_postgres:
+    image: postgres:latest
+    ports:
+      - "55515:5432"
+    volumes:
+      - "./db_postgres:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "111111"
