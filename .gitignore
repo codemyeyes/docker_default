@@ -52,4 +52,5 @@ package-lock.json
 
 db_mysql
 db_mongo
+db_mariadb
 db_postgres
