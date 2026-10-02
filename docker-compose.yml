@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
 
   db_mysql:
-    image: mysql:9.7
+    image: mysql:latest
     restart: always
     ports:
       - "55511:3306"
@@ -14,7 +12,7 @@ services:
     command: mysqld --sql_mode=""
 
   pma:
-    image: phpmyadmin/phpmyadmin:5.2.3
+    image: phpmyadmin/phpmyadmin:latest
     restart: always
     ports:
       - "55512:80"
@@ -22,7 +20,7 @@ services:
       PMA_ARBITRARY: "1"
 
   db_mongo:
-    image: mongo:8.2
+    image: mongo:latest
     restart: always
     ports:
       - "55513:27017"
@@ -35,14 +33,24 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "111111"
 
   db_redis:
-    image: redis:8.8
+    image: redis:latest
     command: "redis-server --requirepass 111111"
     restart: always
     ports:
       - "55514:6379"
 
+  db_postgres:
+    image: postgres:latest
+    ports:
+      - "55515:5432"
+    volumes:
+      - "./db_postgres:/var/lib/postgresql"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "111111"
+
   db_mariadb:
-    image: mariadb:12.3
+    image: mariadb:latest
     restart: always
     ports:
       - "55516:3306"
@@ -52,12 +60,18 @@ services:
       MYSQL_ROOT_PASSWORD: "111111"
       MYSQL_DATABASE: "default"
 
-  db_postgres:
-    image: postgres:18.4
+  mq_rabbitmq:
+    image: rabbitmq:management
+    restart: unless-stopped
     ports:
-      - "55515:5432"
-    volumes:
-      - "./db_postgres:/var/lib/postgresql"
+      - "55517:5672"     # AMQP protocol
+      - "55518:15672"   # Management Web UI
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "111111"
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 111111
+    volumes:
+      - "./mq_rabbitmq:/var/lib/rabbitmq"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M

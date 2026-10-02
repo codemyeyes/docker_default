@@ -54,3 +54,4 @@ db_mysql
 db_mongo
 db_mariadb
 db_postgres
+mq_rabbitmq
